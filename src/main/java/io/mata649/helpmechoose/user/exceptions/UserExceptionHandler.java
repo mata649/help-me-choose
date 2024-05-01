@@ -18,8 +18,8 @@ public class UserExceptionHandler {
                 request.getRequest().getMethod()), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(UsernameAlreadyTaken.class)
-    public ResponseEntity<ApiError> usernameAlreadyTaken(UsernameAlreadyTaken exc, ServletWebRequest request) {
+    @ExceptionHandler(UsernameAlreadyTakenException.class)
+    public ResponseEntity<ApiError> usernameAlreadyTaken(UsernameAlreadyTakenException exc, ServletWebRequest request) {
         return new ResponseEntity<>(new ApiError(exc.getMessage(),
                 HttpStatus.CONFLICT.value(),
                 request.getRequest().getRequestURL().toString(),
