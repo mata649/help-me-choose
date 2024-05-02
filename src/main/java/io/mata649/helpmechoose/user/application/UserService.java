@@ -77,4 +77,9 @@ public class UserService {
         Page<User> users = userRepository.findAll(pageable);
         return users.map(UserResponse::fromUser);
     }
+
+    public UserResponse findByUsername(String username) {
+        User userFound = userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
+        return UserResponse.fromUser(userFound);
+    }
 }
