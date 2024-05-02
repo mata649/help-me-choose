@@ -34,7 +34,6 @@ public class UserService {
         if (userFound.isPresent())
             throw new UsernameAlreadyTakenException();
         User user = User.builder()
-                .id(UUID.randomUUID())
                 .username(request.username())
                 .role(Role.USER)
                 .build();

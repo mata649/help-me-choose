@@ -1,10 +1,7 @@
 package io.mata649.helpmechoose.user.model;
 
 import io.mata649.helpmechoose.role.Role;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,6 +21,7 @@ import java.util.UUID;
 @Builder
 public class User implements UserDetails {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     private String username;
