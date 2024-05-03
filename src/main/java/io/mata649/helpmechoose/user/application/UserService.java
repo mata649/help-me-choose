@@ -45,20 +45,22 @@ public class UserService {
     public UserResponse update(UpdateUserRequest request) {
         User userFound = userRepository.findById(request.id()).orElseThrow(UserNotFoundException::new);
 
-        if (!userFound.getId().equals(request.currentUser()) || !request.currentUserRole().equals(Role.ADMINISTRATOR))
+        if (!userFound.getId().equals(request.currentUser()) && !request.currentUserRole().equals(Role.ADMINISTRATOR))
             throw new ForbiddenException();
 
-        if (userRepository.findByUsername(request.username()).isPresent())
-            throw new UsernameAlreadyTakenException();
-        userFound.setUsername(request.username());
+        userRepository.findByUsername(request.username()).ifPresent(user -> {
+            if (user.getId() != request.id())
+                throw new UsernameAlreadyTakenException();
+        });
 
+        userFound.setUsername(request.username());
         userRepository.save(userFound);
         return UserResponse.fromUser(userFound);
     }
 
     public UserResponse changePassword(ChangePasswordRequest request) {
         User userFound = userRepository.findById(request.id()).orElseThrow(UserNotFoundException::new);
-        if (!userFound.getId().equals(request.currentUser()) || !request.currentUserRole().equals(Role.ADMINISTRATOR))
+        if (!userFound.getId().equals(request.currentUser()) && !request.currentUserRole().equals(Role.ADMINISTRATOR))
             throw new ForbiddenException();
 
         if (!passwordEncoder.matches(request.oldPassword(), userFound.getPassword()))
