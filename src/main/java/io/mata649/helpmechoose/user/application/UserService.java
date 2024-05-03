@@ -38,8 +38,8 @@ public class UserService {
                 .role(Role.USER)
                 .build();
         user.setPassword(passwordEncoder.encode(request.password()));
-        userRepository.save(user);
-        return UserResponse.fromUser(user);
+        User savedUser = userRepository.save(user);
+        return UserResponse.fromUser(savedUser);
     }
 
     public UserResponse update(UpdateUserRequest request) {
