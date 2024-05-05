@@ -62,8 +62,8 @@ public class UserService {
         User userFound = userRepository.findById(request.id()).orElseThrow(UserNotFoundException::new);
         if (!userFound.getId().equals(request.currentUser()) && !request.currentUserRole().equals(Role.ADMINISTRATOR))
             throw new ForbiddenException();
-
-        if (!passwordEncoder.matches(request.oldPassword(), userFound.getPassword()))
+        // Administrator should be able to change passwords even if they don't match
+        if (!passwordEncoder.matches(request.oldPassword(), userFound.getPassword()) && !request.currentUserRole().equals(Role.ADMINISTRATOR))
             throw new ForbiddenException();
         userFound.setPassword(passwordEncoder.encode(request.newPassword()));
         userRepository.save(userFound);
