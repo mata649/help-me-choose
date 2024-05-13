@@ -16,6 +16,10 @@ public class HttpSecurityConfig {
     public SecurityFilterChain configure(final HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authRequestConfig -> authRequestConfig.anyRequest().permitAll()).build();
+                .authorizeHttpRequests(authRequestConfig -> {
+                    authRequestConfig.requestMatchers("/auth/register").permitAll();
+                    authRequestConfig.requestMatchers("/auth/login").permitAll();
+                    authRequestConfig.anyRequest().authenticated();
+                }).build();
     }
 }
