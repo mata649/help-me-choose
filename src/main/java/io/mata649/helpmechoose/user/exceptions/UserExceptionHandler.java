@@ -12,18 +12,16 @@ public class UserExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ApiError> userNotFoundExceptionHandler(UserNotFoundException exc, ServletWebRequest request) {
-        return new ResponseEntity<>(new ApiError(exc.getMessage(),
-                HttpStatus.NOT_FOUND.value(),
-                request.getRequest().getRequestURL().toString(),
-                request.getRequest().getMethod()), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(
+                ApiError.buildBasicError(exc, request, HttpStatus.NOT_FOUND),
+                HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(UsernameAlreadyTakenException.class)
     public ResponseEntity<ApiError> usernameAlreadyTaken(UsernameAlreadyTakenException exc, ServletWebRequest request) {
-        return new ResponseEntity<>(new ApiError(exc.getMessage(),
-                HttpStatus.CONFLICT.value(),
-                request.getRequest().getRequestURL().toString(),
-                request.getRequest().getMethod()), HttpStatus.CONFLICT);
+        return new ResponseEntity<>(
+                ApiError.buildBasicError(exc, request, HttpStatus.CONFLICT),
+                HttpStatus.CONFLICT);
     }
 
 }
