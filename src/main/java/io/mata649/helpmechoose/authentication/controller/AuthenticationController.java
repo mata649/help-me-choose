@@ -2,6 +2,7 @@ package io.mata649.helpmechoose.authentication.controller;
 
 import io.mata649.helpmechoose.authentication.application.AuthenticationService;
 import io.mata649.helpmechoose.authentication.application.dto.LoginUserRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,13 +25,13 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticatedUserResponse> register(@RequestBody RegisterUserRequest request) {
+    public ResponseEntity<AuthenticatedUserResponse> register(@RequestBody @Valid RegisterUserRequest request) {
         AuthenticatedUserResponse response = authenticationService.register(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticatedUserResponse> login(@RequestBody LoginUserRequest request) {
+    public ResponseEntity<AuthenticatedUserResponse> login(@RequestBody @Valid LoginUserRequest request) {
         AuthenticatedUserResponse response = authenticationService.login(request);
         return ResponseEntity.ok(response);
     }
