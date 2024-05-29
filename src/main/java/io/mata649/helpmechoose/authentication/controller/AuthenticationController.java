@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import io.mata649.helpmechoose.authentication.application.dto.AuthenticatedUserResponse;
 import io.mata649.helpmechoose.authentication.application.dto.RegisterUserRequest;
 
-
 @RestController
 @RequestMapping("/auth")
 public class AuthenticationController {

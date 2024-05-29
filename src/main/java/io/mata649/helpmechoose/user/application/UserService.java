@@ -1,5 +1,13 @@
 package io.mata649.helpmechoose.user.application;
 
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import io.mata649.helpmechoose.authentication.exceptions.ForbiddenException;
 import io.mata649.helpmechoose.role.Role;
 import io.mata649.helpmechoose.user.application.dto.ChangePasswordRequest;
@@ -10,13 +18,6 @@ import io.mata649.helpmechoose.user.exceptions.UserNotFoundException;
 import io.mata649.helpmechoose.user.exceptions.UsernameAlreadyTakenException;
 import io.mata649.helpmechoose.user.model.User;
 import io.mata649.helpmechoose.user.repository.UserRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class UserService {
@@ -43,29 +44,32 @@ public class UserService {
     }
 
     public UserResponse update(UpdateUserRequest request) {
-        User userFound = userRepository.findById(request.id()).orElseThrow(UserNotFoundException::new);
+        User userFound = userRepository.findById(request.getId()).orElseThrow(UserNotFoundException::new);
 
-        if (!userFound.getId().equals(request.currentUser()) && !request.currentUserRole().equals(Role.ADMINISTRATOR))
+        if (!userFound.getId().equals(request.getCurrentUserID())
+                && !request.getCurrentUserRole().equals(Role.ADMINISTRATOR))
             throw new ForbiddenException();
 
-        userRepository.findByUsername(request.username()).ifPresent(user -> {
-            if (user.getId() != request.id())
+        userRepository.findByUsername(request.getUsername()).ifPresent(user -> {
+            if (user.getId() != request.getId())
                 throw new UsernameAlreadyTakenException();
         });
 
-        userFound.setUsername(request.username());
+        userFound.setUsername(request.getUsername());
         userRepository.save(userFound);
         return UserResponse.fromUser(userFound);
     }
 
     public UserResponse changePassword(ChangePasswordRequest request) {
-        User userFound = userRepository.findById(request.id()).orElseThrow(UserNotFoundException::new);
-        if (!userFound.getId().equals(request.currentUser()) && !request.currentUserRole().equals(Role.ADMINISTRATOR))
+        User userFound = userRepository.findById(request.getId()).orElseThrow(UserNotFoundException::new);
+        if (!userFound.getId().equals(request.getCurrentUserID())
+                && !request.getCurrentUserRole().equals(Role.ADMINISTRATOR))
             throw new ForbiddenException();
         // Administrator should be able to change passwords even if they don't match
-        if (!passwordEncoder.matches(request.oldPassword(), userFound.getPassword()) && !request.currentUserRole().equals(Role.ADMINISTRATOR))
+        if (!passwordEncoder.matches(request.getOldPassword(), userFound.getPassword())
+                && !request.getCurrentUserRole().equals(Role.ADMINISTRATOR))
             throw new ForbiddenException();
-        userFound.setPassword(passwordEncoder.encode(request.newPassword()));
+        userFound.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(userFound);
         return UserResponse.fromUser(userFound);
     }
