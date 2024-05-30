@@ -1,5 +1,12 @@
 package io.mata649.helpmechoose.authentication.application;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.stereotype.Service;
+
 import io.mata649.helpmechoose.authentication.application.dto.AuthenticatedUserResponse;
 import io.mata649.helpmechoose.authentication.application.dto.LoginUserRequest;
 import io.mata649.helpmechoose.authentication.application.dto.RegisterUserRequest;
@@ -7,13 +14,6 @@ import io.mata649.helpmechoose.authentication.exceptions.PasswordsDontMatchExcep
 import io.mata649.helpmechoose.user.application.UserService;
 import io.mata649.helpmechoose.user.application.dto.CreateUserRequest;
 import io.mata649.helpmechoose.user.application.dto.UserResponse;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.stereotype.Service;
-
-import java.util.AbstractMap;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class AuthenticationService {
@@ -21,7 +21,8 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationService(UserService userService, JwtService jwtService, AuthenticationManager authenticationManager) {
+    public AuthenticationService(UserService userService, JwtService jwtService,
+            AuthenticationManager authenticationManager) {
         this.userService = userService;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
@@ -44,7 +45,8 @@ public class AuthenticationService {
     }
 
     public AuthenticatedUserResponse login(LoginUserRequest request) {
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(request.username(), request.password());
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(request.username(),
+                request.password());
         authenticationManager.authenticate(authToken);
         UserResponse resp = userService.findByUsername(request.username());
         String jwt = jwtService.generateToken(resp.username(), generateExtraClaims(resp));
